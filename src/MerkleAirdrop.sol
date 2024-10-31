@@ -10,10 +10,12 @@ contract MerkleAirdrop {
     // allow someone in the list to claim some ERC20 tokens
 
     error MerkleAirdrop__InvalidProof();
+    error MerkleAirdrop__AlreadyClaimed();
 
     address[] claimers;
     bytes32 private immutable i_merkleRoot;
     IERC20 private immutable i_airdropToken;
+    mapping(address claimer => bool claimed) private s_hasClaimed;
 
     constructor(bytes32 merkleRoot, IERC20 airdropToken) {
         i_merkleRoot = merkleRoot;
@@ -23,11 +25,15 @@ contract MerkleAirdrop {
     event Claimed(address account, uint256 amount);
 
     function claimTokens(address account, uint256 amount, bytes32[] calldata merkleProof) external {
+        if (s_hasClaimed[account]) {
+            revert MerkleAirdrop__AlreadyClaimed();
+        }
         // calculate using the account and the amount, the hash -> leaf node
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(account, amount))));
         if (!MerkleProof.verify(merkleProof, i_merkleRoot, leaf)) {
             revert MerkleAirdrop__InvalidProof();
         }
+        s_hasClaimed[account] = true;
         emit Claimed(account, amount);
         i_airdropToken.safeTransfer(account, amount);
     }
