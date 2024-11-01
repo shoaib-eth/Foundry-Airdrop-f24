@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract MerkleAirdrop {
     using SafeERC20 for IERC20;
@@ -36,5 +36,16 @@ contract MerkleAirdrop {
         s_hasClaimed[account] = true;
         emit Claimed(account, amount);
         i_airdropToken.safeTransfer(account, amount);
+    }
+
+    ////////////////////////
+    /// GETTER FUNCTIONS ///
+    ////////////////////////
+    function getMerkleRoot() external view returns (bytes32) {
+        return i_merkleRoot;
+    }
+
+    function getAirdropToken() external view returns (IERC20) {
+        return i_airdropToken;
     }
 }
