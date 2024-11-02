@@ -4,7 +4,11 @@ out = "out"
 libs = ["lib"]
 ffi = true
 solc = "0.8.24"
-fs_permissions = [{ access = "read-write", path = "./" }]
+fs_permissions = [
+    { access = "read-write", path = "./" },
+    { access = "read", path = "./broadcast" },
+    { access = "read", path = "./reports" },
+]
 remappings = [
     'murky/=lib/murky/',
     '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/',
